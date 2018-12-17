@@ -13,6 +13,7 @@
 # Exctract routine signatures from a C++ module
 import re
 import sys
+import CFuncElement as fe
 
 def loadtxt(filename):
     "Load text file into a string. I let FILE exceptions to pass."
@@ -23,13 +24,23 @@ def loadtxt(filename):
 
 # regex group1, name group2, arguments group3
 def show_func_defs(filename):
-    rproc = r"((?<=[\s:~])(\w+)\s*\(([\w\s,<>\[\].=&':/*]*?)\)\s*(const)?\s*(?=;))"
+    rproc = r"((?<=[\s:~])(\w+)\s*(\w+)\s*\(([\w\s,<>\[\].=&':/*]*?)\)\s*(const)?\s*(?=;))"
     code = loadtxt(filename)
     cppwords = ['if', 'while', 'do', 'for', 'switch']
-    procs = [(i.group(2), i.group(3)) for i in re.finditer(rproc, code) \
-    if i.group(2) not in cppwords]
+
+    procs = [(i.group(1), i.group(2), i.group(3) , i.group(4)) for i in re.finditer(rproc, code) if i.group(3) not in cppwords]
     
-    for i in procs: print i[0] + '(' + i[1] + ')' 
+    for i in procs: 
+        elem = fe.FuncElement()
+        elem.declaration = i[0]
+        elem.returnType = i[1]
+        elem.funcName = i[2]
+        params = i[3]
+        elem.decodeParams(params)
+
+        print i[1] +' ' + i[2]+ '( ' + i[3] + ' )'
+
+
 
 
 if __name__ == "__main__":
