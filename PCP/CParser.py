@@ -38,7 +38,7 @@ def show_func_defs(filename):
         params = i[3]
         elem.decodeParams(params)
 
-        print i[1] +' ' + i[2]+ '( ' + i[3] + ' )'
+        # print i[1] +' ' + i[2]+ '( ' + i[3] + ' )'
 
 
 
