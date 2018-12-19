@@ -18,8 +18,19 @@ class FuncElement():
 	def decodeParams(self, params_str):
 		params_strs = params_str.split(",")
 		for param_str in params_strs:
-			param_name = re.split(r'\s*[\*\&]*\s*' , params_str)[-1]
-			print param_name
+			if ("=" in param_str):
+
+				param_str = re.split(r'\s*=\s*' , param_str)[0]
+				pass
+			
+			param_strs = re.split(r'\s*[\*\&]*\s*' , param_str)
+			param_name = param_strs[-1].strip()
+			param_type = param_str[:-len(param_name)].strip()
+			if(len(param_name) > 0):
+				print param_name + ' : ' +param_type
+				pass
+				
+			
 			pass
 		
 		pass

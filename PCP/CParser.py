@@ -15,6 +15,8 @@ import re
 import sys
 import CFuncElement as fe
 
+CPPWORDS = ['if', 'while', 'do', 'for', 'switch' , 'new']
+
 def loadtxt(filename):
     "Load text file into a string. I let FILE exceptions to pass."
     f = open(filename)
@@ -24,24 +26,36 @@ def loadtxt(filename):
 
 # regex group1, name group2, arguments group3
 def show_func_defs(filename):
-    rproc = r"((?<=[\s:~])(\w+)\s*(\w+)\s*\(([\w\s,<>\[\].=&':/*]*?)\)\s*(const)?\s*(?=;))"
+    rproc = r"((?<=[\s:~])(\w+)\s+(\w+)\s*\(([\w\s,<>\[\].=&':/*]*?)\)\s*(const)?\s*(?=;))"
     code = loadtxt(filename)
-    cppwords = ['if', 'while', 'do', 'for', 'switch']
+    
 
-    procs = [(i.group(1), i.group(2), i.group(3) , i.group(4)) for i in re.finditer(rproc, code) if i.group(3) not in cppwords]
+    procs = [(i.group(1), i.group(2), i.group(3) , i.group(4)) for i in re.finditer(rproc, code) if i.group(3) not in CPPWORDS]
     
     for i in procs: 
         elem = fe.FuncElement()
         elem.declaration = i[0]
+        
+        if "//" in elem.declaration:
+            continue
+            pass
         elem.returnType = i[1]
         elem.funcName = i[2]
         params = i[3]
-        elem.decodeParams(params)
+        if check_function(elem.returnType):
+            print '---func---   ' + i[2]
+            elem.decodeParams(params)
+            # print '---func---' + i[1] +' ' + i[2]+ '( ' + i[3] + ' )'
+            pass
+       
 
-        # print i[1] +' ' + i[2]+ '( ' + i[3] + ' )'
 
-
-
+def check_function(returnType):
+    if returnType in CPPWORDS:
+        return False
+        pass
+    return True
+    pass
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
